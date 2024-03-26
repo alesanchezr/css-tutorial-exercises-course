@@ -1,42 +1,58 @@
-const fs=require("fs");
-const path=require("path");
-const html=fs.readFileSync(path.resolve(__dirname, "./index.html"), "utf8");
+const fs = require("fs");
+const path = require("path");
+const css = fs.readFileSync(path.resolve(__dirname, "./styles.css"), "utf8");
 
 jest.dontMock("fs");
 
-describe("The lists should be modified accordingly", function() {
-  beforeEach(() => {
-    //here I import the HTML into the document
-    document.documentElement.innerHTML = html.toString();
-  });
-  afterEach(() => {
-    jest.resetModules();
-  });
+describe("CSS Styles", () => {
+    beforeAll(() => {
+        document.querySelector("head").innerHTML = `<style>${css.toString()}</style>`;
+    });
 
-  it("You should not change the existing head tag elements", function () {
-    let head = document.querySelector('head');
-    let title = head.querySelector('title').innerHTML;
+    test("Body should have specified styles", () => {
+        const body = document.querySelector("body");
+        expect(body.style.height).toBe("100vh");
+        expect(body.style.background).toBe("rgb(189, 189, 189)");
+    });
 
-    expect(title).toBe('04 List styling')
-  })
+    test("Container class should have specified styles", () => {
+        const container = document.querySelector(".container");
+        expect(container).toBeTruthy();
+        expect(container.style.fontFamily).toBe(
+            '"Comic Sans MS", "Comic Sans", cursive'
+        );
+        expect(container.style.margin).toBe("0px auto");
+        expect(container.style.width).toBe("300px");
+        expect(container.style.boxShadow).toBe("3px 5px 20px #312f2f");
+        expect(container.style.backgroundColor).toBe("white");
+        expect(container.style.padding).toBe("120px");
+    });
 
-  // Test in progress:
-  // it("The lists should be correctly styled", function() {
-  //   const uls = document.querySelectorAll("ul");
-  //   const ols = document.querySelectorAll("ol");
-  //   console.log(uls);
-  //   console.log(ols);
+    test("Cocacola list style should be applied correctly", () => {
+        const cocacolaItems = document.querySelectorAll(".cocacola");
+        cocacolaItems.forEach(item => {
+            expect(getComputedStyle(item).listStyleType).toBe("lower-alpha");
+        });
+    });
 
-  //   var style1 = window.getComputedStyle(ols[0]);
-  //   var style2 = window.getComputedStyle(uls[0]);
-  //   var style3 = window.getComputedStyle(ols[1]);
-  //   var style4 = window.getComputedStyle(uls[1]);
+    test("Pepsi list style should be applied correctly", () => {
+        const pepsiItems = document.querySelectorAll(".pepsi");
+        pepsiItems.forEach(item => {
+            expect(getComputedStyle(item).listStyleType).toBe("square");
+        });
+    });
 
+    test("Healthy list style should be applied correctly", () => {
+        const healthyItems = document.querySelectorAll(".healthy");
+        healthyItems.forEach(item => {
+            expect(getComputedStyle(item).listStyleType).toBe("armenian");
+        });
+    });
 
-  //   expect(style1["listStyleType"]).toBe("lower-alpha");
-  //   expect(style2["listStyleType"]).toBe("square");
-  //   expect(style3["listStyleType"]).toBe("armenian");
-  //   expect(style4["listStyleType"]).toBe("none");
-
-  // });
+    test("Dev-drinks list style should be applied correctly", () => {
+        const devDrinksItems = document.querySelectorAll(".dev-drinks");
+        devDrinksItems.forEach(item => {
+            expect(getComputedStyle(item).listStyleType).toBe("none");
+        });
+    });
 });
